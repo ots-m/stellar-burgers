@@ -1,61 +1,51 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../services/store';
+import { getUser, updateUser } from '../../services/slices/user/userThunks';
+import { resetUser, setUser } from '../../services/slices/user/userSlice';
+import { USER_SLICE_NAME } from '../../services/slices/sliceNames';
 
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
-
-  const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
-    password: ''
-  });
+  const dispatch = useAppDispatch();
+  const { user, isChanged, initialUserData } = useAppSelector(
+    (state) => state[USER_SLICE_NAME]
+  );
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
-  }, [user]);
+    if (!user) {
+      dispatch(getUser());
+    }
+  }, [dispatch, user]);
 
-  const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
-    !!formValue.password;
+  const isFormChanged = isChanged;
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (initialUserData) {
+      dispatch(updateUser(initialUserData));
+    }
   };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
-    setFormValue({
-      name: user.name,
-      email: user.email,
-      password: ''
-    });
+    dispatch(resetUser());
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value
-    }));
+    dispatch(setUser({ ...initialUserData, [e.target.name]: e.target.value }));
   };
 
   return (
     <ProfileUI
-      formValue={formValue}
+      formValue={{
+        name: initialUserData?.name ?? '',
+        email: initialUserData?.email ?? '',
+        password: initialUserData?.password ?? ''
+      }}
       isFormChanged={isFormChanged}
       handleCancel={handleCancel}
       handleSubmit={handleSubmit}
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };
