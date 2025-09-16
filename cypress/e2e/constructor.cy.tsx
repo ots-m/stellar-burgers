@@ -3,19 +3,16 @@
 import { selectors } from '../support/selectors';
 
 describe('Burger Constructor', () => {
-  const BURGER_API_URL =
-    Cypress.env('BURGER_API_URL') || 'https://norma.nomoreparties.space/api';
-
   beforeEach(() => {
-    cy.intercept('GET', `${BURGER_API_URL}/ingredients`, {
+    cy.intercept('GET', `api/ingredients`, {
       fixture: 'ingredients.json'
     }).as('getIngredients');
 
-    cy.intercept('GET', `${BURGER_API_URL}/auth/user`, {
+    cy.intercept('GET', `api/auth/user`, {
       fixture: 'user.json'
     }).as('getUser');
 
-    cy.intercept('POST', `${BURGER_API_URL}/orders`, {
+    cy.intercept('POST', `api/orders`, {
       fixture: 'order.json'
     }).as('createOrder');
 
