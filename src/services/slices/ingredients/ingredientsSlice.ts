@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RequestStatus, TIngredient } from '@utils-types';
 import { INGREDIENT_SLICE_NAME } from '../sliceNames';
 import { getIngredientsApi } from '@api';
